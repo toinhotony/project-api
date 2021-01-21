@@ -1,6 +1,5 @@
 package com.project.api.resource;
 
-import com.project.api.model.User;
 import com.project.api.service.UserService;
 import com.project.api.service.dto.UserDTO;
 import com.project.api.service.dto.UserIDTO;

@@ -4,12 +4,12 @@ import com.project.api.model.User;
 import com.project.api.repository.UserRepository;
 import com.project.api.service.dto.UserDTO;
 import com.project.api.service.dto.UserIDTO;
+import com.project.api.service.exception.CpfNotNumberEvenException;
 import com.project.api.service.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,25 +27,26 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDTO insert(UserIDTO userIDTO) {
+        validateCpf(userIDTO.getCpf().trim());
+
         User user = new User();
 
-        user.setName(userIDTO.getName());
-        user.setCpf(userIDTO.getCpf());
+        user.setName(userIDTO.getName().trim());
+        user.setCpf(userIDTO.getCpf().trim());
 
         return new UserDTO(userRepository.insert(user));
     }
 
     @Override
     public UserDTO update(String id, UserDTO userDTO) {
-        Optional<User> user = userRepository.findById(id);
+        validateCpf(userDTO.getCpf().trim());
 
-        if(user.isPresent()) {
-            user.get().setName(userDTO.getName());
-            user.get().setCpf(userDTO.getCpf());
-            return new UserDTO(userRepository.save(user.get()));
-        }
+        User user = findById(id);
 
-        return null;
+        user.setName(userDTO.getName());
+        user.setCpf(userDTO.getCpf().trim());
+
+        return new UserDTO(userRepository.save(user));
     }
 
     @Override
@@ -54,7 +55,14 @@ public class UserServiceImpl implements UserService{
         userRepository.deleteById(id);
     }
 
-    private UserDTO findById(String id) {
-        return new UserDTO(userRepository.findById(id).orElseThrow(ObjectNotFoundException::new));
+    private User findById(String id) {
+        return userRepository.findById(id).orElseThrow(ObjectNotFoundException::new);
+    }
+
+    private void validateCpf(String cpf) {
+        int number = Integer.parseInt(cpf.substring(cpf.length() - 1));
+
+        if(number % 2 != 0)
+            throw new CpfNotNumberEvenException();
     }
 }

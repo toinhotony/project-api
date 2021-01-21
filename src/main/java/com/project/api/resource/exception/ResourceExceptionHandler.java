@@ -1,5 +1,6 @@
 package com.project.api.resource.exception;
 
+import com.project.api.service.exception.CpfNotNumberEvenException;
 import com.project.api.service.exception.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,16 @@ public class ResourceExceptionHandler {
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
         StandardError standardError = new StandardError(System.currentTimeMillis(), httpStatus.value(),
                 "Não encontrado", error.getMessage(), request.getRequestURI());
+
+        return ResponseEntity.status(httpStatus).body(standardError);
+    }
+
+    @ExceptionHandler(CpfNotNumberEvenException.class)
+    public ResponseEntity<StandardError> objectNotFound(CpfNotNumberEvenException error, HttpServletRequest request) {
+
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        StandardError standardError = new StandardError(System.currentTimeMillis(), httpStatus.value(),
+                "Solicitação inválida", error.getMessage(), request.getRequestURI());
 
         return ResponseEntity.status(httpStatus).body(standardError);
     }
