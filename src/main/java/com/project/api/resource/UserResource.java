@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 
 @RestController
@@ -58,10 +59,10 @@ public class UserResource {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping(value="/import")
-    public ExitStatus runJob(@RequestBody JobLaunchRequest request, @RequestParam MultipartFile file) throws Exception {
+    @PostMapping(value="/import", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ExitStatus runJob(@RequestParam("file") MultipartFile multipartFile) throws Exception {
         Job job = this.context.getBean("jobUserRestService", Job.class);
-        JobParameters jobParameters = new JobParametersBuilder(request.getJobParameters(), jobExplorer)
+        JobParameters jobParameters = new JobParametersBuilder(jobExplorer)
                 .getNextJobParameters(job)
                 .toJobParameters();
 

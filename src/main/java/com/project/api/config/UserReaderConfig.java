@@ -2,7 +2,6 @@ package com.project.api.config;
 
 
 import com.project.api.model.User;
-import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
@@ -17,10 +16,10 @@ public class UserReaderConfig {
 
     @StepScope
     @Bean
-    public FlatFileItemReader<User> userReader(@Value("#{jobParameters['file.input']}") String input){
+    public FlatFileItemReader<User> userReader(@Value("#{jobParameters['jobParameters']}")Resource resource){
         return new FlatFileItemReaderBuilder<User>()
                 .name("userReader")
-                .resource(new FileSystemResource(input))
+                .resource(resource)
                 .delimited()
                 .names("name", "cpf")
                 .targetType(User.class)
