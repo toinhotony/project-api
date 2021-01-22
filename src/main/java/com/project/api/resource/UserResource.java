@@ -1,6 +1,5 @@
 package com.project.api.resource;
 
-import com.project.api.model.JobLaunchRequest;
 import com.project.api.service.UserService;
 import com.project.api.service.dto.UserDTO;
 import com.project.api.service.dto.UserIDTO;
@@ -11,17 +10,14 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
+import javax.servlet.ServletContext;
 import java.util.List;
 
 @RestController
@@ -32,9 +28,14 @@ public class UserResource {
     private UserService userService;
 
     @Autowired
+    private ServletContext servletContext;
+
+    @Autowired
     private JobLauncher jobLauncher;
+
     @Autowired
     private JobExplorer jobExplorer;
+
     @Autowired
     private ApplicationContext context;
 
@@ -60,9 +61,12 @@ public class UserResource {
     }
 
     @PostMapping(value="/import", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ExitStatus runJob(@RequestParam("file") MultipartFile multipartFile) throws Exception {
-        Job job = this.context.getBean("jobUserRestService", Job.class);
-        JobParameters jobParameters = new JobParametersBuilder(jobExplorer)
+    public ExitStatus runJob(@RequestParam MultipartFile file) throws Exception {
+
+        Job job = context.getBean("jobUserRestService", Job.class);
+
+        JobParameters jobParameters = new JobParametersBuilder(
+                new JobParametersBuilder(userService.userJobProperties(file)).toJobParameters(), jobExplorer)
                 .getNextJobParameters(job)
                 .toJobParameters();
 

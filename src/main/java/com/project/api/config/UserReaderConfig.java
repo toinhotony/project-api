@@ -9,17 +9,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 
 @Configuration
 public class UserReaderConfig {
 
     @StepScope
     @Bean
-    public FlatFileItemReader<User> userReader(@Value("#{jobParameters['jobParameters']}")Resource resource){
+    public FlatFileItemReader<User> userReader(@Value("#{jobParameters['fileUser']}") String path) {
         return new FlatFileItemReaderBuilder<User>()
                 .name("userReader")
-                .resource(resource)
+                .resource(new FileSystemResource(path))
                 .delimited()
                 .names("name", "cpf")
                 .targetType(User.class)

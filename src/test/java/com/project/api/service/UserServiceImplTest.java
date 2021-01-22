@@ -4,19 +4,25 @@ import com.project.api.model.User;
 import com.project.api.repository.UserRepository;
 import com.project.api.service.dto.UserDTO;
 import com.project.api.service.dto.UserIDTO;
+import com.project.api.service.exception.CpfInvalidException;
 import com.project.api.service.exception.CpfNotNumberEvenException;
 import com.project.api.service.exception.ObjectNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.project.api.util.FileUtil;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,11 +39,23 @@ class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    private static MockedStatic<FileUtil> fileUtilsMockedStatic;
+
     private User user;
 
     private UserDTO userDTO;
 
     private UserIDTO userIDTO;
+
+    @BeforeAll
+    public static void setupBeforeClass() {
+        fileUtilsMockedStatic = mockStatic(FileUtil.class);
+    }
+
+    @AfterAll
+    public static void setupAfterClass() {
+        fileUtilsMockedStatic.close();
+    }
 
     @BeforeEach
     void setUp() {
@@ -60,6 +78,14 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Deve retornar Exception ao tentar inserir um usuario cpf com caracteres diferantes de numeros")
+    void shouldReturnExceptionInsertWithCpfNotNumber() {
+        userIDTO.setCpf("12345678t933");
+
+        assertThrows(CpfInvalidException.class, () -> userService.insert(userIDTO));
+    }
+
+    @Test
     @DisplayName("Deve retornar Exception ao tentar inserir um usuario cpf impar")
     void shouldReturnExceptionInsertWithCpfOdd() {
         userIDTO.setCpf("12345678933");
@@ -76,6 +102,15 @@ class UserServiceImplTest {
 
         assertThat(userNewDTO).isNotNull();
         assertThat(userNewDTO.getCpf()).isEqualTo("22255588898");
+    }
+
+    @Test
+    @DisplayName("Deve retornar Exception ao tentar atualizar um usuario cpf com caracteres diferantes de numeros")
+    void shouldReturnExceptionUpdateWithCpfNotNumber() {
+        String id = userDTO.getId();
+        userDTO.setCpf("123456t78933");
+
+        assertThrows(CpfInvalidException.class, () -> userService.update(id, userDTO));
     }
 
     @Test
@@ -131,6 +166,16 @@ class UserServiceImplTest {
         verify(userRepository, times(1)).deleteById(anyString());
     }
 
+    @Test
+    @DisplayName("Deve retornar User Properties para usar no Job")
+    void shouldReturnUserPropertiesForJob() throws IOException {
+        MultipartFile file = prepareMultipartFile();
+
+        Properties properties = userService.userJobProperties(file);
+
+        assertThat(properties).isNotNull();
+    }
+
     private User prepareUser() {
         User user = new User();
 
@@ -158,5 +203,51 @@ class UserServiceImplTest {
         userDTO.setCpf("4561237898");
 
         return userDTO;
+    }
+
+    private MultipartFile prepareMultipartFile() {
+        MultipartFile multipartFile = new MultipartFile() {
+            @Override
+            public String getName() {
+                return null;
+            }
+
+            @Override
+            public String getOriginalFilename() {
+                return "fileTest";
+            }
+
+            @Override
+            public String getContentType() {
+                return null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public long getSize() {
+                return 0;
+            }
+
+            @Override
+            public byte[] getBytes() {
+                return new byte[0];
+            }
+
+            @Override
+            public InputStream getInputStream() {
+                return null;
+            }
+
+            @Override
+            public void transferTo(File file) throws IllegalStateException {
+
+            }
+        };
+
+        return multipartFile;
     }
 }
