@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService{
     }
 
     private void validateCpf(String cpf) {
-        if(!cpf.matches("[0-9]*"))
+        if(!cpf.matches("[0-9]*") || cpf.length() != 11)
             throw new CpfInvalidException();
 
         int number = Integer.parseInt(cpf.substring(cpf.length() - 1));

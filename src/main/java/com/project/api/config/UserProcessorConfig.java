@@ -23,8 +23,8 @@ public class UserProcessorConfig {
     private Validator<User> validatorCpf() {
         return user -> {
             user.setCpf(user.getCpf().trim());
-            if(!user.getCpf().matches("[0-9]*"))
-                throw new ValidationException("Cpf só deve conter numeros!");
+            if(!user.getCpf().matches("[0-9]*") || user.getCpf().length() != 11)
+                throw new ValidationException("Cpf Invalido!");
 
             int number = Integer.parseInt(user.getCpf().substring(user.getCpf().length() - 1));
 

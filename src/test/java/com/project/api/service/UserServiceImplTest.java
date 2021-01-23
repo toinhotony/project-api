@@ -86,6 +86,14 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Deve retornar Exception ao tentar inserir um usuario cpf com total de digitos diferente de 11")
+    void shouldReturnExceptionInsertWithCpfInvalid() {
+        userIDTO.setCpf("123456789388");
+
+        assertThrows(CpfInvalidException.class, () -> userService.insert(userIDTO));
+    }
+
+    @Test
     @DisplayName("Deve retornar Exception ao tentar inserir um usuario cpf impar")
     void shouldReturnExceptionInsertWithCpfOdd() {
         userIDTO.setCpf("12345678933");
@@ -111,6 +119,14 @@ class UserServiceImplTest {
         userDTO.setCpf("123456t78933");
 
         assertThrows(CpfInvalidException.class, () -> userService.update(id, userDTO));
+    }
+
+    @Test
+    @DisplayName("Deve retornar Exception ao tentar update um usuario cpf com total de digitos diferente de 11")
+    void shouldReturnExceptionUpdateWithCpfInvalid() {
+        userIDTO.setCpf("123456789388");
+
+        assertThrows(CpfInvalidException.class, () -> userService.insert(userIDTO));
     }
 
     @Test
@@ -200,7 +216,7 @@ class UserServiceImplTest {
 
         userDTO.setId("12345");
         userDTO.setName("Name Test");
-        userDTO.setCpf("4561237898");
+        userDTO.setCpf("45612378988");
 
         return userDTO;
     }
