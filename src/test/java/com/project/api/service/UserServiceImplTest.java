@@ -6,6 +6,7 @@ import com.project.api.service.dto.UserDTO;
 import com.project.api.service.dto.UserIDTO;
 import com.project.api.service.exception.CpfInvalidException;
 import com.project.api.service.exception.CpfNotNumberEvenException;
+import com.project.api.service.exception.NameInvalidException;
 import com.project.api.service.exception.ObjectNotFoundException;
 import com.project.api.util.FileUtil;
 import org.junit.jupiter.api.*;
@@ -78,6 +79,14 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Deve retornar Exception ao tentar inserir um usuario com nome vazio")
+    void shouldReturnExceptionInsertWithNameIsNull() {
+        userIDTO.setName("");
+
+        assertThrows(NameInvalidException.class, () -> userService.insert(userIDTO));
+    }
+
+    @Test
     @DisplayName("Deve retornar Exception ao tentar inserir um usuario cpf com caracteres diferantes de numeros")
     void shouldReturnExceptionInsertWithCpfNotNumber() {
         userIDTO.setCpf("12345678t933");
@@ -110,6 +119,15 @@ class UserServiceImplTest {
 
         assertThat(userNewDTO).isNotNull();
         assertThat(userNewDTO.getCpf()).isEqualTo("22255588898");
+    }
+
+    @Test
+    @DisplayName("Deve retornar Exception ao tentar atualizar um usuario com nome vazio")
+    void shouldReturnExceptionUpdateWithNameIsNull() {
+        String id = userDTO.getId();
+        userDTO.setName("");
+
+        assertThrows(NameInvalidException.class, () -> userService.update(id, userDTO));
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.project.api.service.dto.UserDTO;
 import com.project.api.service.dto.UserIDTO;
 import com.project.api.service.exception.CpfInvalidException;
 import com.project.api.service.exception.CpfNotNumberEvenException;
+import com.project.api.service.exception.NameInvalidException;
 import com.project.api.service.exception.ObjectNotFoundException;
 import com.project.api.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDTO insert(UserIDTO userIDTO) {
-        validateCpf(userIDTO.getCpf().trim());
+        validateUser(userIDTO.getName(), userIDTO.getCpf().trim());
 
         User user = new User();
 
@@ -43,7 +44,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDTO update(String id, UserDTO userDTO) {
-        validateCpf(userDTO.getCpf().trim());
+        validateUser(userDTO.getName(), userDTO.getCpf().trim());
 
         User user = findById(id);
 
@@ -75,7 +76,10 @@ public class UserServiceImpl implements UserService{
         return userRepository.findById(id).orElseThrow(ObjectNotFoundException::new);
     }
 
-    private void validateCpf(String cpf) {
+    private void validateUser(String name, String cpf) {
+        if(name.isEmpty())
+            throw new NameInvalidException();
+
         if(!cpf.matches("[0-9]*") || cpf.length() != 11)
             throw new CpfInvalidException();
 
