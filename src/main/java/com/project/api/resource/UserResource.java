@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletContext;
 import java.util.List;
 
 @RestController
@@ -26,9 +25,6 @@ public class UserResource {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private ServletContext servletContext;
 
     @Autowired
     private JobLauncher jobLauncher;
