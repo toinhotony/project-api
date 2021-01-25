@@ -5,52 +5,43 @@ import com.project.api.service.exception.CpfNotNumberEvenException;
 import com.project.api.service.exception.NameInvalidException;
 import com.project.api.service.exception.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class ResourceExceptionHandler {
 
     @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseEntity<StandardError> objectNotFound(ObjectNotFoundException error, HttpServletRequest request) {
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public StandardError objectNotFound(ObjectNotFoundException error) {
 
-        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-        StandardError standardError = new StandardError(System.currentTimeMillis(), httpStatus.value(),
-                "Não encontrado", error.getMessage(), request.getRequestURI());
-
-        return ResponseEntity.status(httpStatus).body(standardError);
+        return new StandardError(System.currentTimeMillis(), "Not found", error.getMessage());
     }
 
     @ExceptionHandler(CpfNotNumberEvenException.class)
-    public ResponseEntity<StandardError> objectNotFound(CpfNotNumberEvenException error, HttpServletRequest request) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public StandardError objectNotFound(CpfNotNumberEvenException error) {
 
-        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        StandardError standardError = new StandardError(System.currentTimeMillis(), httpStatus.value(),
-                "Solicitação inválida", error.getMessage(), request.getRequestURI());
-
-        return ResponseEntity.status(httpStatus).body(standardError);
+        return new StandardError(System.currentTimeMillis(), "Invalid request", error.getMessage());
     }
 
     @ExceptionHandler(CpfInvalidException.class)
-    public ResponseEntity<StandardError> objectNotFound(CpfInvalidException error, HttpServletRequest request) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public StandardError objectNotFound(CpfInvalidException error) {
 
-        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        StandardError standardError = new StandardError(System.currentTimeMillis(), httpStatus.value(),
-                "Solicitação inválida", error.getMessage(), request.getRequestURI());
-
-        return ResponseEntity.status(httpStatus).body(standardError);
+        return new StandardError(System.currentTimeMillis(),"Invalid request", error.getMessage());
     }
 
     @ExceptionHandler(NameInvalidException.class)
-    public ResponseEntity<StandardError> objectNotFound(NameInvalidException error, HttpServletRequest request) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public StandardError objectNotFound(NameInvalidException error) {
 
-        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        StandardError standardError = new StandardError(System.currentTimeMillis(), httpStatus.value(),
-                "Solicitação inválida", error.getMessage(), request.getRequestURI());
-
-        return ResponseEntity.status(httpStatus).body(standardError);
+        return new StandardError(System.currentTimeMillis(), "Invalid request", error.getMessage());
     }
 }

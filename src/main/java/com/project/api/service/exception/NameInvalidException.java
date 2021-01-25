@@ -3,6 +3,6 @@ package com.project.api.service.exception;
 public class NameInvalidException extends RuntimeException {
 
     public NameInvalidException() {
-        super("Nome Invalido!");
+        super("Invalid name!");
     }
 }

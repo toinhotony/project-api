@@ -37,7 +37,7 @@ public class UserResource {
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> findAll() {
-        return ResponseEntity.ok(userService.findAll());
+        return ResponseEntity.ok().body(userService.findAll());
     }
 
     @PostMapping
@@ -47,7 +47,7 @@ public class UserResource {
 
     @PutMapping(value="/{id}")
     public ResponseEntity<UserDTO> update(@PathVariable String id, @RequestBody UserDTO userDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.update(id, userDTO));
+        return ResponseEntity.ok().body(userService.update(id, userDTO));
     }
 
     @DeleteMapping(value="/{id}")

@@ -9,7 +9,10 @@ import com.project.api.service.exception.CpfNotNumberEvenException;
 import com.project.api.service.exception.NameInvalidException;
 import com.project.api.service.exception.ObjectNotFoundException;
 import com.project.api.util.FileUtil;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -66,7 +69,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar todos usuários cadastros")
     void shouldReturnUsers() {
         List<User> userList = new ArrayList<>();
         userList.add(user);
@@ -79,7 +81,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar Exception ao tentar inserir um usuario com nome vazio")
     void shouldReturnExceptionInsertWithNameIsNull() {
         userIDTO.setName("");
 
@@ -87,7 +88,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar Exception ao tentar inserir um usuario cpf com caracteres diferantes de numeros")
     void shouldReturnExceptionInsertWithCpfNotNumber() {
         userIDTO.setCpf("12345678t933");
 
@@ -95,7 +95,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar Exception ao tentar inserir um usuario cpf com total de digitos diferente de 11")
     void shouldReturnExceptionInsertWithCpfInvalid() {
         userIDTO.setCpf("123456789388");
 
@@ -103,7 +102,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar Exception ao tentar inserir um usuario cpf impar")
     void shouldReturnExceptionInsertWithCpfOdd() {
         userIDTO.setCpf("12345678933");
 
@@ -111,7 +109,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve inserir usuário")
     void shouldInsert() {
         when(userRepository.insert(any(User.class))).thenReturn(user);
 
@@ -122,7 +119,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar Exception ao tentar atualizar um usuario com nome vazio")
     void shouldReturnExceptionUpdateWithNameIsNull() {
         String id = userDTO.getId();
         userDTO.setName("");
@@ -131,7 +127,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar Exception ao tentar atualizar um usuario cpf com caracteres diferantes de numeros")
     void shouldReturnExceptionUpdateWithCpfNotNumber() {
         String id = userDTO.getId();
         userDTO.setCpf("123456t78933");
@@ -140,7 +135,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar Exception ao tentar update um usuario cpf com total de digitos diferente de 11")
     void shouldReturnExceptionUpdateWithCpfInvalid() {
         userIDTO.setCpf("123456789388");
 
@@ -148,7 +142,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar Exception ao tentar atualizar um usuario com cpf impar")
     void shouldReturnExceptionUpdateWithCpfOdd() {
         String id = userDTO.getId();
         userDTO.setCpf("12345678933");
@@ -157,7 +150,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar Exception ao tentar atualizar um usuario que não existe na base")
     void shouldReturnExceptionUpdateUserNotExist() {
         String id = "19547";
 
@@ -167,7 +159,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar um usuario")
     void shouldUpdateUser() {
         String id = userDTO.getId();
 
@@ -181,7 +172,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar Exception ao tentar deletar um usuario que não existe na base")
     void shouldReturnExceptionDeleteUserNotExist() {
         String id = "19547";
 
@@ -191,7 +181,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve deletar um usuario")
     void shouldDeleteUser() {
         when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
 
@@ -201,7 +190,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve retornar User Properties para usar no Job")
     void shouldReturnUserPropertiesForJob() throws IOException {
         MultipartFile file = prepareMultipartFile();
 
